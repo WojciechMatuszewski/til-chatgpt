@@ -17,7 +17,7 @@ module "lambda_function" {
 
     source_path = [
         {
-          path = "${path.module}/functions/hello",
+          path = "${path.module}/cmd/hello",
           commands = [
             "GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o bootstrap main.go",
             ":zip"

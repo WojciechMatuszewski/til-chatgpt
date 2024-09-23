@@ -1,3 +1,4 @@
 go 1.22.4
 
-use ./backend/functions/hello
+use ./backend/cmd/hello
+use ./backend/pkg

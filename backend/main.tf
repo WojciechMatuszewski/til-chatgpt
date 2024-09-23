@@ -1,6 +1,4 @@
 provider "aws" {
-    region = "us-east-1"
-
     default_tags {
       tags = {
         app = "til-chatgpt"
@@ -10,15 +8,24 @@ provider "aws" {
 
 module "lambda_function" {
     source = "terraform-aws-modules/lambda/aws"
-    function_name = "something"
+
+    function_name = "hello"
+
     handler = "bootstrap"
     runtime = "provided.al2023"
     architectures = ["arm64"]
 
     source_path = [
         {
-
+          path = "${path.module}/functions/hello",
+          commands = [
+            "GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o bootstrap main.go",
+            ":zip"
+          ],
+          patterns = [
+            "!.*",
+            "bootstrap"
+          ]
         }
     ]
-    # function_name = "${random}"
 }

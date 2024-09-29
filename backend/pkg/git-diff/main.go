@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -45,12 +46,20 @@ func fetchDiff(ctx context.Context, url string) string {
 		panic(err)
 	}
 
-	var content []string
+	var allDiffs []string
 	for _, fileDiff := range gitDiff {
+		var diffContent bytes.Buffer
+
+		diffContent.WriteString("\n------------\n")
+		diffContent.WriteString(strings.ReplaceAll(fileDiff.NewName, "b/", ""))
+		diffContent.WriteString("\n------------\n")
+
 		for _, diffChunk := range fileDiff.Hunks {
-			content = append(content, string(diffChunk.Body))
+			diffContent.WriteString(string(diffChunk.Body))
 		}
+
+		allDiffs = append(allDiffs, diffContent.String())
 	}
 
-	return strings.TrimSpace(strings.Join(content, "\n"))
+	return strings.TrimSpace(strings.Join(allDiffs, "\n----\n"))
 }
